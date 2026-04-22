@@ -1,10 +1,9 @@
 export default async function handler(req, res) {
-  // CORS headers
+  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // 🔥 ОБРОБКА PREFLIGHT
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -26,25 +25,28 @@ export default async function handler(req, res) {
   const CHAT_ID = process.env.CHAT_ID;
 
   try {
-    const telegramRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: CHAT_ID,
-        text: text,
-      }),
-    });
+    const telegramRes = await fetch(
+      `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: text,
+        }),
+      }
+    );
 
     const data = await telegramRes.json();
 
+    // 🔴 ОСНОВНА ПРАВКА
     if (!data.ok) {
-      console.log(data);
-      throw new Error('Telegram error');
+      return res.status(500).json(data);
     }
 
     return res.status(200).json({ success: true });
+
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: 'Failed to send message' });
+    return res.status(500).json({ error: error.message });
   }
 }
