@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 💬 Повідомлення: ${city}
   `;
 
-  const TELEGRAM_TOKEN = process.env.8229454375:AAFDowxTraZ1hB7zikAC6CWWmjRv_kv-eds;
+  const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
   const CHAT_ID = process.env.CHAT_ID;
 
   try {
