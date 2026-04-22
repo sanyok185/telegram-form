@@ -1,25 +1,25 @@
 export default async function handler(req, res) {
+  // CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // 🔥 ОБРОБКА PREFLIGHT
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  let name, phone, сity;
-
-  // якщо JSON
-  if (req.headers['content-type']?.includes('application/json')) {
-    ({ name, phone, сity } = req.body);
-  } else {
-    // якщо form-data (Webflow)
-    name = req.body.name;
-    phone = req.body.phone;
-    message = req.body.сity;
-  }
+  const { name, phone, city } = req.body;
 
   const text = `
 📝 Нова заявка:
 👤 Ім'я: ${name}
 📞 Телефон: ${phone}
-💬 Місто: ${сity}
+📍 Місто: ${city}
   `;
 
   const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     const data = await telegramRes.json();
 
     if (!data.ok) {
-      console.log(data); // щоб бачити помилку Telegram
+      console.log(data);
       throw new Error('Telegram error');
     }
 
