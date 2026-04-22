@@ -14,13 +14,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { name, phone, message } = req.body;
+    const { name, phone, city } = req.body;
 
     const text = `
 Нова заявка:
 Ім'я: ${name}
 Телефон: ${phone}
-Повідомлення: ${message}
+Повідомлення: ${city}
     `;
 
     await fetch(`https://api.telegram.org/botТВОЙ_TOKEN/sendMessage`, {
