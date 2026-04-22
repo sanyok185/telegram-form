@@ -23,7 +23,7 @@ export default async function handler(req, res) {
 Повідомлення: ${city}
     `;
 
-    await fetch(`https://api.telegram.org/botТВОЙ_TOKEN/sendMessage`, {
+    await fetch(`https://api.telegram.org/8229454375:AAFDowxTraZ1hB7zikAC6CWWmjRv_kv-eds/sendMessage`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
