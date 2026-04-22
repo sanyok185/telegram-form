@@ -1,36 +1,42 @@
 export default async function handler(req, res) {
+  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+  // обробка preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
-export default async function handler(req, res) {
-  // дозволяємо тільки POST
+
   if (req.method !== 'POST') {
     return res.status(405).end();
   }
 
-  const { name, phone, message } = req.body;
+  try {
+    const { name, phone, message } = req.body;
 
-  const text = `
+    const text = `
 Нова заявка:
 Ім'я: ${name}
 Телефон: ${phone}
-Повідомлення: ${city}
-  `;
+Повідомлення: ${message}
+    `;
 
-  await fetch(`https://api.telegram.org/8229454375:AAFwzhcSiDRaJhuggpNslWvaRZKcHlxa_Eo/sendMessage`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      chat_id: "8229454375",
-      text
-    })
-  });
+    await fetch(`https://api.telegram.org/botТВОЙ_TOKEN/sendMessage`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        chat_id: "8229454375",
+        text
+      })
+    });
 
-  return res.status(200).json({ ok: true });
+    return res.status(200).json({ ok: true });
+
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
 }
