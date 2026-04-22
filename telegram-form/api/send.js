@@ -3,13 +3,23 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { name, phone, city } = req.body;
+  let name, phone, сity;
+
+  // якщо JSON
+  if (req.headers['content-type']?.includes('application/json')) {
+    ({ name, phone, message } = req.body);
+  } else {
+    // якщо form-data (Webflow)
+    name = req.body.name;
+    phone = req.body.phone;
+    message = req.body.сity;
+  }
 
   const text = `
 📝 Нова заявка:
 👤 Ім'я: ${name}
 📞 Телефон: ${phone}
-💬 Повідомлення: ${city}
+💬 Повідомлення: ${сity}
   `;
 
   const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
@@ -28,11 +38,13 @@ export default async function handler(req, res) {
     const data = await telegramRes.json();
 
     if (!data.ok) {
+      console.log(data); // щоб бачити помилку Telegram
       throw new Error('Telegram error');
     }
 
     return res.status(200).json({ success: true });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ error: 'Failed to send message' });
   }
 }
