@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
   // якщо JSON
   if (req.headers['content-type']?.includes('application/json')) {
-    ({ name, phone, message } = req.body);
+    ({ name, phone, сity } = req.body);
   } else {
     // якщо form-data (Webflow)
     name = req.body.name;
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
 📝 Нова заявка:
 👤 Ім'я: ${name}
 📞 Телефон: ${phone}
-💬 Повідомлення: ${сity}
+💬 Місто: ${сity}
   `;
 
   const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
