@@ -1,42 +1,38 @@
 export default async function handler(req, res) {
-  // CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // обробка preflight
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
   if (req.method !== 'POST') {
-    return res.status(405).end();
+    return res.status(405).json({ message: 'Method not allowed' });
   }
+
+  const { name, phone, city } = req.body;
+
+  const text = `
+📝 Нова заявка:
+👤 Ім'я: ${name}
+📞 Телефон: ${phone}
+💬 Повідомлення: ${city}
+  `;
+
+  const TELEGRAM_TOKEN = process.env.8229454375:AAFDowxTraZ1hB7zikAC6CWWmjRv_kv-eds;
+  const CHAT_ID = process.env.CHAT_ID;
 
   try {
-    const { name, phone, city } = req.body;
-
-    const text = `
-Нова заявка:
-Ім'я: ${name}
-Телефон: ${phone}
-Повідомлення: ${city}
-    `;
-
-    await fetch(`https://api.telegram.org/8229454375:AAFDowxTraZ1hB7zikAC6CWWmjRv_kv-eds/sendMessage`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+    const telegramRes = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        chat_id: 8229454375,
-        text
-      })
+        chat_id: CHAT_ID,
+        text: text,
+      }),
     });
 
-    return res.status(200).json({ ok: true });
+    const data = await telegramRes.json();
 
-  } catch (e) {
-    return res.status(500).json({ error: e.message });
+    if (!data.ok) {
+      throw new Error('Telegram error');
+    }
+
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to send message' });
   }
 }
